@@ -268,3 +268,76 @@ npm run dev
 
 <img src="./img/section06-lecture070-001.png">
 
+## 📚 Lecture 071: Rendering the Items List
+
+### 1. Copy the `initialItems` array from **`index.css`** and paste it on **`PackingList.jsx`** file:
+```jsx
+const initialItems = [
+  { id: 1, description: "Passports", quantity: 2, packed: false },
+  { id: 2, description: "Socks", quantity: 12, packed: false },
+];
+const PackingList = () => {
+  return <div className="list">LIST</div>;
+};
+export default PackingList;
+```
+
+### 2. Create **`Item`** component:
+```jsx
+// ./src/components/Item.jsx
+const Item = ({ item }) => {
+  return <li>{item.description}</li>;
+};
+export default Item;
+```
+
+### 3. Coming back **`PackingList`** component, apply the **`map`** method:
+```jsx
+const initialItems = [
+  { id: 1, description: "Passports", quantity: 2, packed: false },
+  { id: 2, description: "Socks", quantity: 12, packed: false },
+];
+const PackingList = () => {
+  return (
+    <div className="list">
+      <ul>
+        {initialItems.map((item) => (<Item item={item} />))}
+      </ul>
+    </div>
+  )
+};
+export default PackingList;
+```
+<img src="./img/section06-lecture070-002.png">
+
+
+### 4. Update **`Item`** component:
+```jsx
+const Item = ({ item }) => {
+  return (
+    <li>
+      <span>
+        {item.quantity} {item.description}
+      </span>
+      <button>❌</button>
+    </li>
+  )
+};
+export default Item;
+```
+
+### 5. Update **`Item`** style:
+```jsx
+const Item = ({ item }) => {
+  return (
+    <li>
+      <span style={item.packed ? {textDecoration : "line-through"} : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button>❌</button>
+    </li>
+  )
+};
+export default Item;
+```
+
