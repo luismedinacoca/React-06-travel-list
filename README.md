@@ -341,3 +341,81 @@ const Item = ({ item }) => {
 export default Item;
 ```
 
+## 📚 Lecture 072. Building a Form and Handling Submissions
+
+### 1. Working with **`Form`** component:
+```jsx
+const Form = () => {
+  return (
+    <form className="add-form">
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <input type="text" placeholder="Item..." />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+<img src="./img/section06-lecture072-001.png">
+
+### 2. Enhance the select option values:
+```jsx
+const Form = () => {
+  return (
+    <form className="add-form">
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select>
+        {/*<option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>*/}
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+<img src="./img/section06-lecture072-002.png">
+
+### 3. Create **`handleSubmit`** function:
+```jsx
+const Form = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("hello from FORM component!!");
+    console.log(e);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select>
+        {/*<option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>*/}
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+
+
+
