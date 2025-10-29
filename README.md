@@ -341,7 +341,7 @@ const Item = ({ item }) => {
 export default Item;
 ```
 
-## 📚 Lecture 072. Building a Form and Handling Submissions
+## 📚 Lecture 072: Building a Form and Handling Submissions
 
 ### 1. Working with **`Form`** component:
 ```jsx
@@ -417,5 +417,178 @@ const Form = () => {
 export default Form;
 ```
 
+## 📚 Lecture 073: Controlled Elements
+
+### 1. Make React controls the **`input field`** instead of the DOM:
+```jsx
+// ./src/components/Form.jsx
+import { useState } from "react";  // 👈🏽 ✅
+const Form = () => {
+  const [description, setDescription] = useState("test");  // 👈🏽 ✅
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} />  {/* 👈🏽 ✅ */}
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+<img src="./img/section06-lecture073-001.png">
+
+In ordert control input changes:
+
+```jsx
+// ./src/components/Form.jsx
+import { useState } from "react";
+const Form = () => {
+  const [description, setDescription] = useState("test");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input 
+        type="text" 
+        placeholder="Item..." 
+        value={description} 
+        onChange={ (e) => setDescription(e.target.value)}
+      />  {/* 👈🏽 ✅ */}
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+
+### 2. Make React has control of **`select`** value:
+```jsx
+import { useState } from "react";
+const Form = () => {
+  const [description, setDescription] = useState("test");
+  const [quantity, setQuantity] = useState(1);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+
+Note:
+1. Take a look at  **`Components`** extension.
+2. The select code could be at first:
+    ```jsx
+    <select value={quantity} onChange={(e) => setQuantity(e.target.value)}>
+    ```
+    So the returned value would be a **`string`** instead of a **`number`**, that's why the casting is mandatory from the previous one to:
+    ```jsx
+    <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+    ```
+
+### 3. Working with the **`handleSubmit`** function:
+#### 1. Create a new Item:
+```jsx
+import { useState } from "react";
+const Form = () => {
+  const [description, setDescription] = useState("test");
+  const [quantity, setQuantity] = useState(1);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newItem = { description, quantity, packed: false, id: Date.now() };  // 👈🏽✅
+    console.log(newItem);  // 👈🏽✅
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+<img src="./img/section06-lecture073-002.png">
 
 
+#### 2. As you can see, there are two big issues from the previous image:
+
+1. quantituy dropdown and item input are not back to theeir initial vaues/state.
+
+2. The brand new item is not added inside the packing list.
+
+### 4. Fixing the quantity dropdwon and item input field issue:
+```jsx
+import { useState } from "react";
+const Form = () => {
+  const [description, setDescription] = useState("test");
+  const [quantity, setQuantity] = useState(1);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!description) return;  // 👈🏽 ✅ no description => no submit anything
+    const newItem = { description, quantity, packed: false, id: Date.now() };
+    console.log(newItem);
+    setDescription("");  // 👈🏽 ✅ come back to its initial value/state.
+    setQuantity(1);  // 👈🏽 ✅ come back to its initial value/state.
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+Remaining Issue:
+<img src="./img/section06-lecture073-003.png">
