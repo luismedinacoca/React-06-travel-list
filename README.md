@@ -592,3 +592,12 @@ export default Form;
 ```
 Remaining Issue:
 <img src="./img/section06-lecture073-003.png">
+
+
+## 📚 Lecture 074: State vs. Props
+
+<img src="./img/section06-lecture074-001.png">
+
+
+
+## 📚 Lecture 0
