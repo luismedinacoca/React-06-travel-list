@@ -1,4 +1,4 @@
-# 🚧 Steps project
+# 🧑🏾‍💻 Section 06
 
 ## 📚 Lecture 069: Starting a New Project: The "Far Away" Travel List
 
