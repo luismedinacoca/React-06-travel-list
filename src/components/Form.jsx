@@ -1,13 +1,24 @@
 import { useState } from "react";
 
-const Form = () => {
+const Form = ({ onAddItems }) => {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
+  //const [items, setItems] = useState([]);
+
+  /*
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log(items);
+  };
+  */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!description) return;
     const newItem = { description, quantity, packed: false, id: Date.now() };
     console.log(newItem);
+
+    //create a function to add this new item to the packing list
+    onAddItems(newItem);
     setDescription("");
     setQuantity(1);
   };

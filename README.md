@@ -599,5 +599,160 @@ Remaining Issue:
 <img src="./img/section06-lecture074-001.png">
 
 
+# 🧑🏾‍💻 Section 07: Thinking in React: State Management
 
-## 📚 Lecture 0
+## 📚 Lecture 080: Thinking about State and Lifting State up.
+
+### 1. Working on Form:
+```js
+import { useState } from "react";
+
+const Form = () => {
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [items, setItems] = useState([]);
+
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log(items);
+  };  // 👈🏽 ✅
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!description) return;
+    const newItem = { description, quantity, packed: false, id: Date.now() };
+    console.log(newItem);
+
+    //create a function to add this new item to the packing list
+    handleAddItems(newItem);  // 👈🏽 ✅
+    setDescription("");
+    setQuantity(1);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+
+Isue: Lift State up:
+
+<img src="./img/section07-lecture080-001.png">
+
+### 2. Move **`[items, setItems] = useState([])`** to **`App.js`**
+
+```jsx
+// ./src/App.jsx
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+const App = () => {
+  const [items, setItems] = useState([]); //👈🏽 ✅
+  return (
+    <div className="app">
+      <Logo />
+      <Form />
+      <PackingList items={items} /> //👈🏽 ✅
+      <Stats />
+    </div>
+  );
+};
+export default App;
+```
+PackingList component:
+```jsx
+// ./src/components/PackingList.jsx
+import Item from "./Item";
+const PackingList = ({ items }) => { // 👈🏽 ✅
+  return (
+    <div className="list">
+      <ul>
+        {items.map((item) => ( // 👈🏽 ✅
+          <Item item={item} key={item.id} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+### 3. Move **`handleAddItems()`** functin moves to **`App.jsx`**:
+```jsx
+// ./src/App.jsx
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => { // 👈🏽 ✅
+    setItems((items) => [...items, newItem]);
+    console.log(items);
+  }; 
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} /> // 👈🏽 ✅
+      <PackingList items={items} />
+      <Stats />
+    </div>
+  );
+};
+export default App;
+```
+
+Update **`Form.jsx`**:
+```jsx
+import { useState } from "react";
+const Form = ({ onAddItems }) => { // 👈🏽 ✅
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  //const [items, setItems] = useState([]);
+  /*
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log(items);
+  };
+  */
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!description) return;
+    const newItem = { description, quantity, packed: false, id: Date.now() };
+    console.log(newItem);
+    //create a function to add this new item to the packing list
+    onAddItems(newItem); // 👈🏽 ✅
+    setDescription("");
+    setQuantity(1);
+  };
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <h3>What do you neeed for 😍 your trip?</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+};
+export default Form;
+```
+
