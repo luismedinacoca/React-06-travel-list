@@ -756,3 +756,13 @@ const Form = ({ onAddItems }) => { // 👈🏽 ✅
 export default Form;
 ```
 
+## 📚 Lecture 081: Reviewing "Lifting Up State"
+
+<img src="./img/section07-lecture081-001.png">
+<img src="./img/section07-lecture081-002.png">
+<img src="./img/section07-lecture081-003.png">
+
+
+
+## 📚 Lecture 0
+
