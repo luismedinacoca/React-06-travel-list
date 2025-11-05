@@ -764,5 +764,99 @@ export default Form;
 
 
 
-## 📚 Lecture 0
+## 📚 Lecture 082: Deleting an Item: More Child-to-Parent Communication!
 
+### 1. Same as previous situation, **`App.jsx`** must have the **`handleDeleteItem`** function.
+```jsx
+// ./src/App.jsx
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log(items);
+  };
+  const handleDeleteItem = (id) => { // 👈🏽 ✅
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} /> // 👈🏽 ✅
+      <Stats />
+    </div>
+  );
+};
+export default App;
+```
+
+> This onDeleteItem was send as props to **`PackingList`** 
+
+### 2. Working with **`PackingList.jsx`** with the **`onDeleteItem`** as props:
+```jsx
+// ./src/components/PackingList.jsx
+import Item from "./Item";
+const PackingList = ({ items, onDeleteItem }) => {  // 👈🏽 ✅
+  return (
+    <div className="list">
+      <ul>
+        {items.map((item) => (
+          <Item item={item} nDeleteItem={onDeleteItem} key={item.id} />  // 👈🏽 ✅
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+> This **`onDeleteItem`** is sent as props into **`Item.jsx`**
+
+### 3. Working on **`Item.jsx`**:
+```jsx
+// ./src/components/Item.jsx
+const Item = ({ item, onDeleteItem }) => {  // 👈🏽 ✅
+  return (
+    <li>
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button onClick={onDeleteItem}>❌</button>  // 👈🏽 ✅
+    </li>
+  );
+};
+export default Item;
+```
+
+> Notice:
+
+- However when user clicks on **`<button onClick={onDeleteItem}>❌</button>`** noting happens
+
+- Beside, need to send the **`ID`** as parameter inside the onDeleteItem.
+
+```jsx
+const Item = ({ item, onDeleteItem }) => {
+  return (
+    <li>
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>  // 👈🏽 ✅
+    </li>
+  );
+};
+export default Item;
+```
+
+<img src="./img/section07-lecture082-001.png">
+
+
+
+
+
+## 📚 Lecture 0
