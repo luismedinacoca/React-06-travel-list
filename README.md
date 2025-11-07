@@ -856,7 +856,105 @@ export default Item;
 <img src="./img/section07-lecture082-001.png">
 
 
+## 📚 Lecture 083: Updating an Item: Complex Immutable Data Operation 
+
+### 1. Working on **`Item`** component - adding a checkbox input:
+```jsx
+const Item = ({ item, onDeleteItem }) => {
+  return (
+    <li>
+      <input type="checkbox" value={item.packed} onChange={() => {}} />
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
+    </li>
+  );
+};
+
+export default Item;
+```
+
+### 2. **`Item`** modification starts from **`App`** component:
+
+The principle of **`“Lifting State Up”`** => **`handleToggleItem`** is in **`App.jsx`** because:
+- The items state lives in App.jsx
+```jsx
+const [items, setItems] = useState([]);
+```
+
+- In React, only the component that owns the state can modify it directly.
+- Since items is in App.jsx, the functions that modify it must also be in that same component.
+
+```jsx
+// ./src/App.jsx
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log("handleAddItems: ", items);
+  };
+  const handleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+  const handleToggleItem = (id) => {  // 👈🏽 ✅
+    setItems((items) => items.map((item) => (item.id === id ? { ...item, packed: !item.packed } : item)));
+  };  // 👈🏽 ✅
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} />  // 👈🏽 ✅
+      <Stats />
+    </div>
+  );
+};
+export default App;
+```
+
+### 3. Sending **`onToggleItem`** props to **`PackingList`**:
+```jsx
+// ./src/components/PackingList
+import Item from "./Item";
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {  // 👈🏽 ✅
+  return (
+    <div className="list">
+      <ul>
+        {items.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />  // 👈🏽 ✅
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+### 4. Sending **`onToggleItem`** props to **`Item`**:
+```jsx
+// ./src/components/Item.jsx
+const Item = ({ item, onDeleteItem, onToggleItem }) => {  // 👈🏽 ✅
+  return (
+    <li>
+      <input type="checkbox" value={item.packed} onChange={() => onToggleItem(item.id)} />  // 👈🏽 ✅
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
+    </li>
+  );
+};
+export default Item;
+```
 
 
 
+
+
+## 📚 Lecture 0
 ## 📚 Lecture 0
