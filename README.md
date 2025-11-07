@@ -958,5 +958,139 @@ export default Item;
 
 
 
+## 📚 Lecture 085: Calculating Statistics as Derived State
+
+You got `items` on **`App.jsx`**, can we just using this `items` from **`Stats`**?
+```jsx
+// ./src/components/Stats.jsx
+const Stats = () => {
+  const numItems = items.length;  // 👈🏽 ✅ however it's wrong ❌
+  return (
+    <footer className="stats">
+      <em>
+        {" "}
+        💼 You have {numItems} items on your list, and you already packed X (X%)
+      </em>
+    </footer>
+  );
+};
+export default Stats;
+```
+
+### 1. Sending **`items`** to Stats as props from **`App.jsx`**:
+```jsx
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log("handleAddItems: ", items);
+  };
+  const handleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+  const handleToggleItem = (id) => {
+    setItems((items) => items.map((item) => (item.id === id ? { ...item, packed: !item.packed } : item)));
+  };
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} />
+      <Stats items={items} />  // 👈🏽 ✅ 
+    </div>
+  );
+};
+export default App;
+```
+And in **`Stats.jsx`**
+```jsx
+// ./src/components/Stats.jsx
+const Stats = ({ items }) => {
+  const numItems = items.length;
+  return (
+    <footer className="stats">
+      <em>
+        {" "}
+        💼 You have {numItems} items on your list, and you already packed X (X%)
+      </em>
+    </footer>
+  );
+};
+export default Stats;
+```
+
+### 2. Complete **`Stats`** code:
+```jsx
+// ./src/components/Stats.jsx
+const Stats = ({ items }) => {
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;  // 👈🏽 ✅ 
+  const percentage = Math.round((numPacked / numItems) * 100);  // 👈🏽 ✅ 
+  return (
+    <footer className="stats">
+      <em>
+        {" "}
+        💼 You have {numItems} items on your list, and you already packed {numPacked} ({percentage}%)  // 👈🏽 ✅ 
+      </em>
+    </footer>
+  );
+};
+export default Stats;
+```
+
+### 3. Modify the Footer when 100% is packed:
+```jsx
+// ./src/components/Stats.jsx
+const Stats = ({ items }) => {
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+  return (
+    <footer className="stats">
+      <em>
+        {percentage === 100
+          ? "You got everything! Ready to go ✈️"
+          : `💼 You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}  // 👈🏽 ✅ 
+      </em>
+    </footer>
+  );
+};
+export default Stats;
+```
+
+### 4. Update an early return:
+```jsx
+// ./src/components/Stats.jsx
+const Stats = ({ items }) => {
+  if(!items.length){ // 👈🏽 ✅
+    return (
+      <p className="stats">
+        <em>Start adding some items to your packing list 🚀</em>
+      </p>
+    )
+  } // 👈🏽 ✅
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+  return (
+    <footer className="stats">
+      <em>
+        {percentage === 100
+          ? "You got everything! Ready to go ✈️"
+          : `💼 You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}  
+      </em>
+    </footer>
+  );
+};
+export default Stats;
+```
+
+
+
 ## 📚 Lecture 0
 ## 📚 Lecture 0
