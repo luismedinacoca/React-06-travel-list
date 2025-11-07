@@ -953,6 +953,8 @@ export default Item;
 ```
 
 
+## 📚 Lecture 084: Derived State
+<img src="./img/section07-lecture084-001.png">
 
 
 
