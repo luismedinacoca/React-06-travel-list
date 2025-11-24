@@ -1090,7 +1090,356 @@ const Stats = ({ items }) => {
 export default Stats;
 ```
 
+## 📚 Lecture 086: Sorting Items
 
+### 1. Add the Sort dropdown element inside **`PackingList`**:
+```jsx
+import Item from "./Item";
 
-## 📚 Lecture 0
-## 📚 Lecture 0
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (  // 👈🏽 ✅
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+```
+
+### 2. Adding the **`useState Hook`**:
+```jsx
+import { useState } from "react";
+import Item from "./Item";
+
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {
+  const [sortBy, setSortBy] = useState("input");  // 👈🏽 ✅
+  let sortedItems;  // 👈🏽 ✅
+  if (sortBy === "input") sortedItems = items;  // 👈🏽 ✅
+
+  if (sortBy == "description") sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));  // 👈🏽 ✅
+
+  if (sortBy == "packed") sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));  // 👈🏽 ✅
+
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (  // 👈🏽 ✅
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+## 📚 Lecture 086: Sorting Items:
+
+#### 1. Multiple if:
+```jsx
+/* src/components/PackingList.jsx */
+import { useState } from "react";
+import Item from "./Item";
+
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {
+  const [sortBy, setSortBy] = useState("input");
+  let sortedItems;
+  if (sortBy === "input") sortedItems = items;
+
+  if (sortBy == "description") sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));
+
+  if (sortBy == "packed") sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+  
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+#### 2. Nested If:
+```jsx
+/* src/components/PackingList.jsx */
+import { useState } from "react";
+import Item from "./Item";
+
+const PackingList = ({ items, onDeleteItem, onToggleItem}) => {
+  const [sortBy, setSortBy] = useState("input");
+  let sortedItems;
+
+  if (sortBy === "input") {
+    sortedItems = items;
+  } else if (sortBy === "description") {
+    sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));
+  } else if (sortBy === "packed") {
+    sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+  }
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default PackingList;
+```
+
+#### 3. function:
+```jsx
+/* src/components/PackingList.jsx */
+import { useState } from "react";
+import Item from "./Item";
+
+const sortStrategies = {
+  input: (items) => items,
+  description: (items) => items.slice().sort((a, b) => a.description.localeCompare(b.description)),
+  packed: (items) => items.slice().sort((a, b) => Number(a.packed) - Number(b.packed)),
+};
+
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {
+  const [sortBy, setSortBy] = useState("input");
+  const sortedItems = sortStrategies[sortBy](items);
+  
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default PackingList;
+```
+
+```
+# 🚀 Final Summary
+
+| Code                    | What it does |
+|-------------------------|----------------------------------------------------------------|
+| `sortStrategies`        | Contains several functions                                     |
+| `sortStrategies[sortBy]`| Looks up the function based on the user's selection            |
+| `(items)`               | Executes that function with the array to be sorted.            |
+| **Result**              | `sortedItems` gets sorted according to the chosen strategy     |
+```
+
+## 📚 Lecture 087: Clearing the list:
+
+### 1. Adding the Onclick function in **`PackingList`** component:
+```jsx
+/* src/components/PackingList.jsx */
+import { useState } from "react";
+import Item from "./Item";
+
+const PackingList = ({ items, onDeleteItem, onToggleItem }) => {
+  const [sortBy, setSortBy] = useState("input");
+  let sortedItems;
+
+  if (sortBy === "input") {
+    sortedItems = items;
+  } else if (sortBy === "description") {
+    sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));
+  } else if (sortBy === "packed") {
+    sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+  }
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+        <button onClick={...}>Clear list</button>  // 👈🏽 ✅
+      </div>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+#### 2. Create the **`handleClearList`** function in **`App.jsx`**
+```jsx
+/* src/App.jsx */
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log("handleAddItems: ", items);
+  };
+
+  const handleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+
+  const handleToggleItem = (id) => {
+    setItems((items) => items.map((item) => (item.id === id ? { ...item, packed: !item.packed } : item)));
+  };
+
+  const handleClearList = () => {  // 👈🏽 ✅
+    setItems([]);
+  };
+
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+        handleClearList={handleClearList}  // 👈🏽 ✅
+      />
+      <Stats items={items} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+#### 3. Add the **`handleClearList`** prop in **`PackingList`** component:
+```jsx
+/* src/components/PackingList.jsx */
+import { useState } from "react";
+import Item from "./Item";
+
+const PackingList = ({ items, onDeleteItem, onToggleItem, handleClearList }) => {  // 👈🏽 ✅
+  const [sortBy, setSortBy] = useState("input");
+  let sortedItems;
+
+  if (sortBy === "input") {
+    sortedItems = items;
+  } else if (sortBy === "description") {
+    sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));
+  } else if (sortBy === "packed") {
+    sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+  }
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} onToggleItem={onToggleItem} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+        <button onClick={() => handleClearList()}>Clear list</button>  // 👈🏽 ✅
+      </div>
+    </div>
+  );
+};
+export default PackingList;
+```
+
+#### 4. Create an **`Alert`** for confirmation:
+```jsx
+/* src/App.jsx */
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
+import { useState } from "react";
+
+const App = () => {
+  const [items, setItems] = useState([]);
+  const handleAddItems = (newItem) => {
+    setItems((items) => [...items, newItem]);
+    console.log("handleAddItems: ", items);
+  };
+
+  const handleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+
+  const handleToggleItem = (id) => {
+    setItems((items) => items.map((item) => (item.id === id ? { ...item, packed: !item.packed } : item)));
+  };
+
+  const handleClearList = () => {
+    const confirmed = window.confirm("Are you sure you want to delete all items?");  // 👈🏽 ✅
+    if (confirmed) setItems([]);  // 👈🏽 ✅
+  };
+
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItems} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+        handleClearList={handleClearList}
+      />
+      <Stats items={items} />
+    </div>
+  );
+};
+
+export default App;
+```
